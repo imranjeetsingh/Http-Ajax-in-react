@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Axios from 'axios';
 
 import Post from '../../components/Post/Post';
 import FullPost from '../../components/FullPost/FullPost';
@@ -6,13 +7,31 @@ import NewPost from '../../components/NewPost/NewPost';
 import './Blog.css';
 
 class Blog extends Component {
+    state = {
+        posts : []
+    }
+
+    componentDidMount(){
+        Axios.get('https://jsonplaceholder.typicode.com/posts')
+             .then(response =>{
+                 const posts = response.data.slice(0,4);
+                 const updatedData = posts.map(post=>{
+                     return {
+                         ...post,
+                         author : "Ranjeet Singh"
+                     }
+                 })
+                 this.setState({posts : updatedData})
+             })
+    }
     render () {
+        const posts = this.state.posts.map(post =>{
+            return <Post key = {post.id} title = {post.title} author= {post.author}/>
+        })
         return (
             <div>
                 <section className="Posts">
-                    <Post />
-                    <Post />
-                    <Post />
+                   {posts}
                 </section>
                 <section>
                     <FullPost />
